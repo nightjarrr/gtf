@@ -1,4 +1,7 @@
-
 syntax: regexp
-^data$glob:.pydevproject
-glob:.project
+^data
+.pydevproject$
+.project$
+.pyc$
+.po$
+.mo$
