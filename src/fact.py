@@ -25,7 +25,7 @@ class Fact(Taggable):
         self.format = format
 
     def isApplicableTo(self, actor):
-        return True
+        return not self.hasTags() or self.isTaggedWithAny(actor.tags)
 
     def getFactAbout(self, actor):
         "Creates the concrete fact which is is built from the fact pattern and the specified actor"
