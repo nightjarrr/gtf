@@ -39,6 +39,7 @@ class FactChooser:
         random.seed();
 
     def choose(self, actor):
+        # Filter the available facts and select only facts applicable to the specified actor.
         applicableFacts = [fact for fact in self.facts if fact.isApplicableTo(actor)]
         if len(applicableFacts) == 0:
             return None
