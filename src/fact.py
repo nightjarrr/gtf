@@ -36,11 +36,21 @@ class FactChooser:
 
     def __init__(self, facts):
         self.facts = facts
+        # The dictionary where actors are mapped to the lists of facts
+        # that are applicable to them.
+        self.cache = {}
         random.seed();
 
     def choose(self, actor):
-        # Filter the available facts and select only facts applicable to the specified actor.
-        applicableFacts = [fact for fact in self.facts if fact.isApplicableTo(actor)]
+        applicableFacts = []
+        if self.cache.has_key(actor.name):
+            applicableFacts = self.cache[actor.name]
+        else:
+            # Filter the available facts and select only facts applicable to the specified actor.
+            applicableFacts = [fact for fact in self.facts if fact.isApplicableTo(actor)]
+            # Add the filtered list to cache, to avoid doing the same work in future.
+            self.cache[actor.name] = applicableFacts
+            
         if len(applicableFacts) == 0:
             return None
         return random.choice(applicableFacts)
