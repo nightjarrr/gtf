@@ -1,3 +1,4 @@
 
 syntax: regexp
-^data$
+^data$glob:.pydevproject
+glob:.project
