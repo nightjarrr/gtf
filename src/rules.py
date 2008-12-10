@@ -54,3 +54,44 @@ class OrRule(CompositeRule):
         for rule in self.baseRules:
             if rule.evaluate(actor): return True
         return False
+
+class RuleParserError(Exception): pass
+
+class RuleParser:
+    def __init__(self, source, pos = 0):
+        self.ctx = RuleParserContext(source, pos)     
+
+    def parse(self):
+        pass
+
+class RuleParserState:
+    INITIAL = 0
+    READING = 1
+        
+class RuleParserContext:
+    
+    def __init__(self, source, pos = 0):
+        self.source = source    # The source string
+        self.pos = pos          # The current position in the source
+        self.hasErrors = False
+        self.rule = None
+        self.state = RuleParserState.INITIAL
+    
+    def readRule(self):
+        ch = self.source[self.pos]
+        if ch == "!":
+            self.rule = NotRule(None)
+        elif ch == "@":
+            self.rule = NameRule(None)
+        elif ch == "["
+            self.rule = OrRule([])  
+        elif ch == "("
+            self.rule = AndRule([])
+        elif ch.isalpha()
+            self.rule = TagRule(None)  
+    
+    pass
+
+class RuleFormatter:
+    def read(self, rulesString):
+        pass    
