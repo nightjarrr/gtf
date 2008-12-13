@@ -81,11 +81,11 @@ class RuleParserContext:
             self.rule = NotRule(None)
         elif ch == "@":
             self.rule = NameRule(None)
-        elif ch == "["
+        elif ch == "[":
             self.rule = OrRule([])  
-        elif ch == "("
+        elif ch == "(":
             self.rule = AndRule([])
-        elif ch.isalpha()
+        elif ch.isalpha():
             self.rule = TagRule(None)  
     
     pass
