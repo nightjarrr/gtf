@@ -1,3 +1,26 @@
+"""
+    Module name: rules.
+
+    Description:
+
+    This module contains classes that define the logical rules - a set of
+    simple expressions that can be combined into complex expressions.
+
+    Each instance of logical rule can take some object is input value,
+    and produce a boolean result: whether the object satisfies the rule or not.
+
+    The module also contains classes that can parse the rules from the string
+    representation, and convert an existing rule to the equivalent string.
+
+    Example string representation of complex rule:
+
+    ([animal, bird, fish], !big)
+    This string defines the following complex logical expression:
+        All objects, that are animal, bird or fish, but are nott big,
+        satisfy this expression.
+
+
+"""
 
 class TrueRule:
     def evaluate(self, actor):
