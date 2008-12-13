@@ -1,5 +1,5 @@
 import unittest
-from taggable import Taggable
+from getthefacts.taggable import Taggable
 
 class HasTagsTestCase(unittest.TestCase):
     def runTest(self):
