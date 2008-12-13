@@ -1,5 +1,6 @@
 import unittest
-from rules import *
+from getthefacts.actor import *
+from getthefacts.rules import *
 
 class TrueRuleTests(unittest.TestCase):
 	def testAlwaysEvaluatesToTrue(self):
