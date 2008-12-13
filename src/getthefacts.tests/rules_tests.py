@@ -48,5 +48,39 @@ class TagRuleTests(unittest.TestCase):
 		r = TagRule("tag1")
 		assert not r.evaluate(Actor("name1", ["tag2"]))
 
+class AndRuleTests(unittest.TestCase):
+    def testTrueAndFalseIsFalse(self):
+        r = AndRule([TrueRule(), FalseRule()])
+        assert not r.evaluate("some input")
+
+    def testFalseAndTrueIsFalse(self):
+        r = AndRule([TrueRule(), FalseRule()])
+        assert not r.evaluate("some input")
+
+    def testFalseAndFalseIsFalse(self):
+        r = AndRule([FalseRule(), FalseRule()])
+        assert not r.evaluate("some input")
+
+    def testTrueAndTrueIsTrue(self):
+        r = AndRule([TrueRule(), TrueRule()])
+        assert r.evaluate("some input")
+
+class OrRuleTests(unittest.TestCase):
+    def testTrueOrFalseIsTrue(self):
+        r = OrRule([TrueRule(), FalseRule()])
+        assert r.evaluate("some input")
+
+    def testFalseOrTrueIsTrue(self):
+        r = OrRule([TrueRule(), FalseRule()])
+        assert r.evaluate("some input")
+
+    def testFalseOrFalseIsFalse(self):
+        r = OrRule([FalseRule(), FalseRule()])
+        assert not r.evaluate("some input")
+
+    def testTrueOrTrueIsTrue(self):
+        r = OrRule([TrueRule(), TrueRule()])
+        assert r.evaluate("some input")
+
 if __name__ == "__main__":
     unittest.main()
