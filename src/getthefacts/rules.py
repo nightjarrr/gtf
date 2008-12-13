@@ -16,9 +16,8 @@
 
     ([animal, bird, fish], !big)
     This string defines the following complex logical expression:
-        All objects, that are animal, bird or fish, but are nott big,
-        satisfy this expression.
-
+        All objects, that are animal, bird or fish,
+        but are not big, satisfy this expression.
 
 """
 
