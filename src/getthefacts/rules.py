@@ -51,3 +51,21 @@ class OrRule(CompositeRule):
         return False
 
 class RuleParserError(Exception): pass
+
+class RuleParser:
+    def parseTag(self, str, pos):
+        pass
+
+    def parseName(self, str, pos):
+        pass
+
+    def parseNot(self, str, pos):
+        pass
+
+    def parseAnd(self, str, pos):
+        pass
+
+    def parseOr(self, str, pos):
+        pass
+    
+    pass
