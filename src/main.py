@@ -1,6 +1,5 @@
-﻿import gettext
-from fact import *
-from actor import *
+from getthefacts.fact import *
+from getthefacts.actor import *
 import os
 
 #t = gettext.translation("getthefacts", "lang")

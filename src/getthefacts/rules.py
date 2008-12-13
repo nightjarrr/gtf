@@ -1,5 +1,3 @@
-from actor import Actor
-
 class Rule:
     def evaluate(self, actor):
         pass
