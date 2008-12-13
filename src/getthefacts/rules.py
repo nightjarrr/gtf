@@ -22,10 +22,18 @@
 """
 
 class TrueRule:
+    """
+    This rule can be satisfied with any input object.
+    It always returns "True" from the evaluate() method.
+    """
     def evaluate(self, actor):
         return True
     
 class FalseRule:
+    """
+    This rule rejects any input object as non-satisfying.
+    It always returns "False" from the evaluate() method.
+    """
     def evaluate(self, actor):
         return False
     
