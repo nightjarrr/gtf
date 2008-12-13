@@ -1,37 +1,34 @@
-class Rule:
-    def evaluate(self, actor):
-        pass
-    
-class TrueRule(Rule):
+
+class TrueRule:
     def evaluate(self, actor):
         return True
     
-class FalseRule(Rule):
+class FalseRule:
     def evaluate(self, actor):
         return False
     
-class TagRule(Rule):
+class TagRule:
     def __init__(self, tag):
         self.tag = tag
         
     def evaluate(self, actor):
         return actor.isTaggedWith(self.tag)
     
-class NameRule(Rule):
+class NameRule:
     def __init__(self, name):
         self.name = name
         
     def evaluate(self, actor):
         return self.name == actor.name
     
-class NotRule(Rule):
+class NotRule:
     def __init__(self, baseRule):
         self.baseRule = baseRule
         
     def evaluate(self, actor):
         return not self.baseRule.evaluate(actor)
     
-class CompositeRule(Rule):
+class CompositeRule:
     def __init__(self, baseRules):
         self.baseRules = baseRules
         
