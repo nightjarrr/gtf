@@ -130,7 +130,7 @@ class RuleParser:
             elif ctx.currentChar.isalphanum():
                 self.__parseTag(ctx)
             else:
-                ctx.reportError("Invalid rule format: unknown rule at %d" %
+                ctx.reportError("Invalid rule format: unknown rule at %d." %
                                 ctx.currentPos)
 
         if ctx.hasErrors:
