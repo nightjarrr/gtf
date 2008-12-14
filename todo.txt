@@ -1,0 +1,3 @@
+The list of improvements in code, ifrastructure, etc.
+
+1. Versioning of packages and applications.
