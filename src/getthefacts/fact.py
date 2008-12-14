@@ -18,7 +18,7 @@ class Fact(Taggable):
                 Rules are defined in terms of actor's attributes, and impose restrictions on them.
                 
                 Example:
-                The rule {["fish", "bird"],!big} defines all actors, that are fish or bird, and are not big. 
+                The rule (["fish", "bird"],!big) defines all actors, that are fish or bird, and are not big.
         
         """
     def __init__(self, format, tags = []):
