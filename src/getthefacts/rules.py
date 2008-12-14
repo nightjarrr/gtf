@@ -148,8 +148,11 @@ class RuleParser:
     into the rule object.
     """
 
-    # List of recognized whitespace characters
+    # List of recognized whitespace characters.
     WHITESPACES = [" ", "\t"]
+
+    # List of reserves characters in this grammar.
+    RESERVED = [",", "[", "]", "(", ")", "!", "@"]
 
     def __init__(self, ruleString):
         """Initialize RuleParser instance with string representation of rule."""
@@ -177,7 +180,7 @@ class RuleParser:
             self.__parseOr(ctx)
         elif ctx.getChar() == "(":
             self.__parseAnd(ctx)
-        elif ctx.getChar().isalnum():
+        elif self.__isTextChar(ctx.getChar()):
             self.__parseTag(ctx)
         else:
             ctx.reportError("Invalid rule format: unknown rule at %d." %
@@ -190,7 +193,7 @@ class RuleParser:
 
     def __isTextChar(self, ch):
         """Return True, if specified character is a text character."""
-        return ch.isalnum() or ch in [" ", "_", "-"]
+        return not ch in self.RESERVED
 
     def __parseText(self, ctx):
         """Parse the text value and return it as string."""
