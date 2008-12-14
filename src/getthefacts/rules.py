@@ -117,7 +117,26 @@ class RuleParser:
         If the string is not a correct representation of rule, a RuleParserError
         is raised.
         """
-        pass
+        ctx = RuleParserContext(self.str, 0)
+        while not ctx.isDone:
+            if ctx.currentChar == "@":
+                self.__parseName(ctx)
+            elif ctx.currentChar == "!":
+                self.__parseNot(ctx)
+            elif ctx.currentChar == "[":
+                self.__parseOr(ctx)
+            elif ctx.currentChar == "(":
+                self.__parseAnd(ctx)
+            elif ctx.currentChar.isalphanum():
+                self.__parseTag(ctx)
+            else:
+                ctx.reportError("Invalid rule format: unknown rule at %d" %
+                                ctx.currentPos)
+
+        if ctx.hasErrors:
+            raise RuleParserError, ctx.error
+        else:
+            return ctx.result
 
     def __parseTag(self, ctx):
         pass
@@ -133,5 +152,3 @@ class RuleParser:
 
     def __parseOr(self, ctx):
         pass
-    
-    pass
