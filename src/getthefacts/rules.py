@@ -1,5 +1,5 @@
 """
-    Module name: rules.
+    Module: rules.
 
     Description:
 
@@ -21,47 +21,58 @@
 
 """
 
+
 class TrueRule:
+
     """
     This rule can be satisfied with any input object.
     It always returns "True" from the evaluate() method.
     """
+
     def evaluate(self, actor):
         return True
+
     
 class FalseRule:
+
     """
     This rule rejects any input object as non-satisfying.
     It always returns "False" from the evaluate() method.
     """
+
     def evaluate(self, actor):
         return False
-    
+
+
 class TagRule:
     def __init__(self, tag):
         self.tag = tag
         
     def evaluate(self, actor):
         return actor.isTaggedWith(self.tag)
-    
+
+
 class NameRule:
     def __init__(self, name):
         self.name = name
         
     def evaluate(self, actor):
         return self.name == actor.name
-    
+
+
 class NotRule:
     def __init__(self, baseRule):
         self.baseRule = baseRule
         
     def evaluate(self, actor):
         return not self.baseRule.evaluate(actor)
-    
+
+
 class CompositeRule:
     def __init__(self, baseRules):
         self.baseRules = baseRules
-        
+
+
 class AndRule(CompositeRule):
     def __init__(self, baseRules):
         CompositeRule.__init__(self, baseRules)
@@ -70,7 +81,8 @@ class AndRule(CompositeRule):
         for rule in self.baseRules:
             if not rule.evaluate(actor): return False
         return True
-    
+
+
 class OrRule(CompositeRule):
     def __init__(self, baseRules):
         CompositeRule.__init__(self, baseRules)
@@ -80,22 +92,37 @@ class OrRule(CompositeRule):
             if rule.evaluate(actor): return True
         return False
 
+
 class RuleParserError(Exception): pass
 
+
+class RuleParserContext: pass
+
+
 class RuleParser:
-    def parseTag(self, str, pos):
+    
+    """
+    RuleParser provides the ability to parse a string representation of rule
+    into the rule object.
+    """
+
+    def __init__(self, ruleString):
+        """Initialize RuleParser instance with string representation of rule."""
+        self.str = ruleString
+
+    def __parseTag(self, ctx):
         pass
 
-    def parseName(self, str, pos):
+    def __parseName(self, ctx):
         pass
 
-    def parseNot(self, str, pos):
+    def __parseNot(self, ctx):
         pass
 
-    def parseAnd(self, str, pos):
+    def __parseAnd(self, ctx):
         pass
 
-    def parseOr(self, str, pos):
+    def __parseOr(self, ctx):
         pass
     
     pass
