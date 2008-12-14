@@ -213,6 +213,8 @@ class RuleParser:
         """
         Parse one rule using specified parsing context and return rule instance.
         """
+        self.__skipWhitespace(ctx)
+
         if ctx.getChar() == "@":
             self.__parseName(ctx)
         elif ctx.getChar() == "!":
@@ -225,7 +227,7 @@ class RuleParser:
             self.__parseTag(ctx)
         else:
             ctx.reportError("Invalid rule format: unknown rule at %d." %
-                            ctx.currentPos)
+                            ctx.pos)
 
         if ctx.hasErrors:
             raise RuleParserError, ctx.error
@@ -241,7 +243,7 @@ class RuleParser:
         start = ctx.pos
         while not ctx.isEOL() and self.__isTextChar(ctx.getChar()):
             ctx.moveNext()
-        return ctx.str[start:ctx.pos]
+        return ctx.str[start:ctx.pos].strip()
 
     def __parseTag(self, ctx):
         """Parse the TagRule from string."""
@@ -274,7 +276,11 @@ class RuleParser:
             # If the comma-separated list of rules isn't finished yet.
             if not ctx.isEOL() and ctx.getChar() == ",":
                 # then move to the start of the next rule.
+                ctx.moveNext()
                 self.__skipWhitespace(ctx)
+
+        if not ctx.isEOL() and (ctx.getChar() == ")"):
+            ctx.moveNext()
 
         if len(rules) == 0:
             raise RuleParserError, "Incorrect or empty And rule definition. "
@@ -294,7 +300,12 @@ class RuleParser:
             # If the comma-separated list of rules isn't finished yet.
             if not ctx.isEOL() and ctx.getChar() == ",":
                 # then move to the start of the next rule.
+                ctx.moveNext()
                 self.__skipWhitespace(ctx)
+
+        if not ctx.isEOL() and (ctx.getChar() == ")"):
+            ctx.moveNext()
+
 
         if len(rules) == 0:
             raise RuleParserError, "Incorrect or empty Or rule definition. "
