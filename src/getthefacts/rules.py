@@ -96,8 +96,31 @@ class OrRule(CompositeRule):
 class RuleParserError(Exception): pass
 
 
-class RuleParserContext: pass
+class RuleParserContext:
 
+    """
+    RuleParserContext stores information about the current stage of string
+    parsing process.
+    """
+
+    def __init__(self, str, pos):
+        """Initialize RuleParserContext with string and starting position."""
+        self.str = str
+        self.pos = pos
+        self.hasErrors = False
+        self.error = ""
+        self.result = None
+        self.isDone = False
+
+    def getChar(self):
+        """Return the character at the current position of the string."""
+        return self.str[self.pos]
+
+    def reportError(self, errorMsg):
+        """Set the context state as erroneous and break the parsing process."""
+        self.isDone = True
+        self.hasErrors = True
+        self.error = errorMsg
 
 class RuleParser:
     
@@ -119,15 +142,15 @@ class RuleParser:
         """
         ctx = RuleParserContext(self.str, 0)
         while not ctx.isDone:
-            if ctx.currentChar == "@":
+            if ctx.getChar() == "@":
                 self.__parseName(ctx)
-            elif ctx.currentChar == "!":
+            elif ctx.getChar() == "!":
                 self.__parseNot(ctx)
-            elif ctx.currentChar == "[":
+            elif ctx.getChar() == "[":
                 self.__parseOr(ctx)
-            elif ctx.currentChar == "(":
+            elif ctx.getChar() == "(":
                 self.__parseAnd(ctx)
-            elif ctx.currentChar.isalphanum():
+            elif ctx.getChar().isalphanum():
                 self.__parseTag(ctx)
             else:
                 ctx.reportError("Invalid rule format: unknown rule at %d." %
