@@ -35,7 +35,7 @@ class RuleBase:
     def __eq__(self, other):
         return NotImplemented
 
-class TrueRule:
+class TrueRule(RuleBase):
 
     """
     This rule can be satisfied with any input object.
@@ -49,7 +49,7 @@ class TrueRule:
         return other.__class__ is TrueRule
 
     
-class FalseRule:
+class FalseRule(RuleBase):
 
     """
     This rule rejects any input object as non-satisfying.
@@ -63,7 +63,7 @@ class FalseRule:
         return other.__class__ is FalseRule
 
 
-class TagRule:
+class TagRule(RuleBase):
     def __init__(self, tag):
         self.tag = tag
         
@@ -74,7 +74,7 @@ class TagRule:
         return (other.__class__ is TagRule) and (self.tag == other.tag)
 
 
-class NameRule:
+class NameRule(RuleBase):
     def __init__(self, name):
         self.name = name
         
@@ -85,7 +85,7 @@ class NameRule:
         return (other.__class__ is NameRule) and (self.name == other.name)
 
 
-class NotRule:
+class NotRule(RuleBase):
     def __init__(self, baseRule):
         self.baseRule = baseRule
         
@@ -97,7 +97,7 @@ class NotRule:
                (self.baseRule == other.baseRule)
 
 
-class CompositeRule:
+class CompositeRule(RuleBase):
     def __init__(self, baseRules):
         self.baseRules = baseRules
 
