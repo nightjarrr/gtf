@@ -33,6 +33,10 @@ class TagRuleParserTests(unittest.TestCase):
         assert rule == TagRule("bear")
 
 class AndRuleParserTests(unittest.TestCase):
+    
+    def testParseSimple(self):
+        assert AndRule([TagRule("tag1")]) == RuleParser("(tag1)").parse()
+
     def testParse(self):
         p = RuleParser("(bear, !@Winnie-The-Pooh, !toy)")
         rule = p.parse()
