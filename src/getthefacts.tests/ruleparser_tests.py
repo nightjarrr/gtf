@@ -8,8 +8,7 @@ class NameRuleParserTests(unittest.TestCase):
         name = "Winnie-The-Pooh"
         p = RuleParser("@" + name)
         rule = p.parse()
-        assert rule.__class__ is NameRule
-        assert rule.name == name
+        assert rule == NameRule(name)
 
 class NotRuleParserTests(unittest.TestCase):
 
@@ -17,16 +16,13 @@ class NotRuleParserTests(unittest.TestCase):
         name = "Winnie-The-Pooh"
         p = RuleParser("!@" + name)
         rule = p.parse()
-        assert rule.__class__ is NotRule
-        assert rule.baseRule.__class__ is NameRule
-        assert rule.baseRule.name == name
+        assert rule == NotRule(NameRule(name))
 
 class TagRuleParserTests(unittest.TestCase):
     def testParse(self):
         p = RuleParser("bear")
         rule = p.parse()
-        assert rule.__class__ is TagRule
-        assert rule.tag == "bear"
+        assert rule == TagRule("bear")
 
 if __name__ == "__main__":
     unittest.main()
