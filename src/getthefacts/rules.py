@@ -110,6 +110,15 @@ class RuleParser:
         """Initialize RuleParser instance with string representation of rule."""
         self.str = ruleString
 
+    def parse(self):
+        """
+        Parse the string into rule and return rule instance.
+
+        If the string is not a correct representation of rule, a RuleParserError
+        is raised.
+        """
+        pass
+
     def __parseTag(self, ctx):
         pass
 
