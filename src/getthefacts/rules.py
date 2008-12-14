@@ -21,7 +21,6 @@
 
 """
 
-
 class TrueRule:
 
     """
@@ -116,11 +115,30 @@ class RuleParserContext:
         """Return the character at the current position of the string."""
         return self.str[self.pos]
 
+    def isEOL(self):
+        """
+        Return True if the current position is beyond the end of the line,
+        and False otherwise.
+        """
+        return (self.pos >= len(self.str))
+
     def reportError(self, errorMsg):
         """Set the context state as erroneous and break the parsing process."""
         self.isDone = True
         self.hasErrors = True
         self.error = errorMsg
+
+    def moveNext(self):
+        """Move current context position to next character in string."""
+        self.moveBy(1)
+
+    def moveTo(self, newPos):
+        """Move current context position to specified position."""
+        self.pos = newPos
+
+    def moveBy(self, delta):
+        """Move current context position by specified delta."""
+        self.pos += delta
 
 class RuleParser:
     
@@ -128,6 +146,9 @@ class RuleParser:
     RuleParser provides the ability to parse a string representation of rule
     into the rule object.
     """
+
+    # List of recognized whitespace characters
+    WHITESPACES = [" ", "\t"]
 
     def __init__(self, ruleString):
         """Initialize RuleParser instance with string representation of rule."""
@@ -141,37 +162,104 @@ class RuleParser:
         is raised.
         """
         ctx = RuleParserContext(self.str, 0)
-        while not ctx.isDone:
-            if ctx.getChar() == "@":
-                self.__parseName(ctx)
-            elif ctx.getChar() == "!":
-                self.__parseNot(ctx)
-            elif ctx.getChar() == "[":
-                self.__parseOr(ctx)
-            elif ctx.getChar() == "(":
-                self.__parseAnd(ctx)
-            elif ctx.getChar().isalphanum():
-                self.__parseTag(ctx)
-            else:
-                ctx.reportError("Invalid rule format: unknown rule at %d." %
-                                ctx.currentPos)
+        return self.__parseRule(ctx)
+
+    def __parseRule(self, ctx):
+        """
+        Parse one rule using specified parsing context and return rule instance.
+        """
+        if ctx.getChar() == "@":
+            self.__parseName(ctx)
+        elif ctx.getChar() == "!":
+            self.__parseNot(ctx)
+        elif ctx.getChar() == "[":
+            self.__parseOr(ctx)
+        elif ctx.getChar() == "(":
+            self.__parseAnd(ctx)
+        elif ctx.getChar().isalphanum():
+            self.__parseTag(ctx)
+        else:
+            ctx.reportError("Invalid rule format: unknown rule at %d." %
+                            ctx.currentPos)
 
         if ctx.hasErrors:
             raise RuleParserError, ctx.error
         else:
             return ctx.result
 
+    def __isTextChar(self, ch):
+        """Return True, if specified character is a text character."""
+        return ch.isalnum() or ch in [" ", "_", "-"]
+
+    def __parseText(self, ctx):
+        """Parse the text value and return it as string."""
+        start = ctx.pos
+        while not ctx.isEOL() and self.__isTextChar(ctx.getChar()):
+            ctx.moveNext()
+        return ctx.str[start:ctx.pos]
+
     def __parseTag(self, ctx):
-        pass
+        """Parse the TagRule from string."""
+        ctx.result = self.__parseText(ctx)
 
     def __parseName(self, ctx):
-        pass
+        """Parse the NameRule from string."""
+        # Skip the "@" character.
+        ctx.moveNext()
+        ctx.result = self.__parseText(ctx)
 
     def __parseNot(self, ctx):
-        pass
+        """Parse the NotRule from string."""
+        # Skip the "!" character.
+        ctx.moveNext()
+        self.__skipWhitespace(ctx)
+        # Wrap the rule next to "!" into the NotRule.
+        ctx.result = NotRule(self.__parseRule(ctx))
 
     def __parseAnd(self, ctx):
-        pass
+        """Parse the AndRule from string."""
+        # Skip the "(".
+        ctx.moveNext()
+        self.__skipWhitespace(ctx)
+        rules = []
+        while not ctx.isEOL() and (ctx.getChar() != ")"):
+            r = self.__parseRule(ctx)
+            rules.append(r)
+            self.__skipWhitespace(ctx)
+            # If the comma-separated list of rules isn't finished yet.
+            if not ctx.isEOL() and ctx.getChar() == ",":
+                # then move to the start of the next rule.
+                self.__skipWhitespace(ctx)
+
+        if len(rules) == 0:
+            raise RuleParserError, "Incorrect or empty And rule definition. "
+
+        ctx.result = AndRule(rules)
 
     def __parseOr(self, ctx):
-        pass
+        """Parse the OrRule from string."""
+        # Skip the "[".
+        ctx.moveNext()
+        self.__skipWhitespace(ctx)
+        rules = []
+        while not ctx.isEOL() and (ctx.getChar() != "]"):
+            r = self.__parseRule(ctx)
+            rules.append(r)
+            self.__skipWhitespace(ctx)
+            # If the comma-separated list of rules isn't finished yet.
+            if not ctx.isEOL() and ctx.getChar() == ",":
+                # then move to the start of the next rule.
+                self.__skipWhitespace(ctx)
+
+        if len(rules) == 0:
+            raise RuleParserError, "Incorrect or empty Or rule definition. "
+
+        ctx.result = OrRule(rules)
+
+    def __skipWhitespace(self, ctx):
+        """
+        Skip the whitespace from current position to the first non-whitespace
+        symbol.
+        """
+        while not ctx.isEOL() and (ctx.getChar() in self.WHITESPACES):
+            ctx.moveNext()
