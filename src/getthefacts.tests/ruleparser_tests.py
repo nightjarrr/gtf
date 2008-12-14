@@ -19,8 +19,6 @@ class NotRuleParserTests(unittest.TestCase):
 
     def testParseWhitespace(self):
         name = "Winnie-The-Pooh"
-        p = RuleParser("!   @" + name)
-        rule = p.parse()
         assert NotRule(NameRule(name)) == RuleParser("!   @" + name).parse()
         assert NotRule(NameRule(name)) == RuleParser("!\t@" + name).parse()
         assert NotRule(NameRule(name)) == RuleParser("! @" + name).parse()
@@ -55,6 +53,24 @@ class AndRuleParserTests(unittest.TestCase):
         p = RuleParser("!(@Baloo, !big)")
         rule = p.parse()
         assert rule == NotRule(AndRule([NameRule("Baloo"), NotRule(TagRule("big"))]))
+
+    def testParseWhitespace(self):
+        # Sample rule: (@Baloo, bear, !toy)
+        rule = AndRule([NameRule("Baloo"), TagRule("bear"), NotRule(TagRule("toy"))])
+        assert rule == RuleParser("(@Baloo, bear, !toy)").parse()
+        assert rule == RuleParser("\t(@Baloo, bear, !toy)").parse()
+        assert rule == RuleParser(" (@Baloo, bear, !toy)").parse()
+        assert rule == RuleParser("(\t@Baloo, bear, !toy)").parse()
+        assert rule == RuleParser("( @Baloo, bear, !toy)").parse()
+        assert rule == RuleParser("(  @Baloo, bear, !toy)").parse()
+        assert rule == RuleParser("(@Baloo,bear,!toy)").parse()
+        assert rule == RuleParser("(@Baloo,\tbear, !toy)").parse()
+        assert rule == RuleParser("(@Baloo,     bear, !toy)").parse()
+        assert rule == RuleParser("(@Baloo,bear,\t!toy)").parse()
+        assert rule == RuleParser("(@Baloo,bear,!toy\t)").parse()
+        assert rule == RuleParser("(@Baloo,bear,!toy    )").parse()
+        assert rule == RuleParser("(@Baloo, bear, !toy)\t").parse()
+        assert rule == RuleParser("(@Baloo, bear, !toy)    ").parse()
 
 class OrRuleParserTests(unittest.TestCase):
     pass
