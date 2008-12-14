@@ -102,8 +102,8 @@ class OrRuleParserTests(unittest.TestCase):
         p = RuleParser("[@Winnie-The-Pooh, ([@Baloo, toy], big)]")
         rule = p.parse()
         assert rule == OrRule([NameRule("Winnie-The-Pooh"),
-                               AndRule([OrRule([TagRule("toy"),
-                                                NameRule("Baloo")]),
+                               AndRule([OrRule([NameRule("Baloo"),
+                                                TagRule("toy")]),
                                         TagRule("big")])])
 
 
