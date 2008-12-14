@@ -241,7 +241,7 @@ class RuleParser:
     def __parseText(self, ctx):
         """Parse the text value and return it as string."""
         start = ctx.pos
-        while not ctx.isEOL() and self.__isTextChar(ctx.getChar()):
+        while (not ctx.isEOL()) and self.__isTextChar(ctx.getChar()):
             ctx.moveNext()
         return ctx.str[start:ctx.pos].strip()
 
@@ -303,7 +303,7 @@ class RuleParser:
                 ctx.moveNext()
                 self.__skipWhitespace(ctx)
 
-        if not ctx.isEOL() and (ctx.getChar() == ")"):
+        if not ctx.isEOL() and (ctx.getChar() == "]"):
             ctx.moveNext()
 
 
