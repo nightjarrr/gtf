@@ -1,3 +1,4 @@
+# coding=UTF-8
 import unittest
 from getthefacts.actor import *
 from getthefacts.rules import *

@@ -1,3 +1,4 @@
+# coding=UTF-8
 from taggable import Taggable
 
 class Actor(Taggable):

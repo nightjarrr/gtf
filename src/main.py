@@ -1,3 +1,4 @@
+# coding=UTF-8
 from getthefacts.fact import *
 from getthefacts.actor import *
 import os

@@ -1,3 +1,5 @@
+# coding=UTF-8
+
 class Taggable:
     "Defines an object that can be assigned with several descriptive tags"
     def __init__(self, tags):
