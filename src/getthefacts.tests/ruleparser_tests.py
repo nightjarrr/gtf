@@ -1,4 +1,5 @@
 # coding=UTF-8
+from getthefacts.rules import RuleParserContext
 from getthefacts.rules import *
 import unittest
 
@@ -77,8 +78,34 @@ class AndRuleParserTests(unittest.TestCase):
         assert rule == RuleParser("(@Baloo, bear, !toy)    ").parse()
 
 class OrRuleParserTests(unittest.TestCase):
-    pass
-    
+    def testParseSimple(self):
+        assert OrRule([TagRule("tag1")]) == RuleParser("[tag1]").parse()
+
+    def testParse(self):
+        p = RuleParser("[!bear, @Winnie-The-Pooh, toy]")
+        rule = p.parse()
+        assert rule == OrRule([NotRule(TagRule("bear")),
+                               NameRule("Winnie-The-Pooh"),
+                               TagRule("toy")])
+
+    def testParseEmbeddedAnd(self):
+        # Accept either Winnie-the-pooh, or big bear (not toy, and not named Baloo)
+        p = RuleParser("[@Winnie-The-Pooh, (bear, big, !toy, !@Baloo)]")
+        rule = p.parse()
+        assert rule == OrRule([NameRule("Winnie-The-Pooh"),
+                               AndRule([TagRule("bear"),
+                                        TagRule("big"),
+                                        NotRule(TagRule("toy")),
+                                        NotRule(NameRule("Baloo"))])])
+
+    def testParseEmbeddedOr(self):
+        p = RuleParser("[@Winnie-The-Pooh, ([@Baloo, toy], big)]")
+        rule = p.parse()
+        assert rule == OrRule([NameRule("Winnie-The-Pooh"),
+                               AndRule([OrRule([TagRule("toy"),
+                                                NameRule("Baloo")]),
+                                        TagRule("big")])])
+
 
 if __name__ == "__main__":
     unittest.main()
