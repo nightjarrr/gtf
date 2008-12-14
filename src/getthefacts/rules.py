@@ -22,6 +22,19 @@
 
 """
 
+
+class RuleBase:
+
+    """
+    Base class for all rules.
+
+    Overrides the __eq__ operator, but gives no implementation. This forces all
+    decendants to override the equality operator to aviod errors.
+    """
+
+    def __eq__(self, other):
+        return NotImplemented
+
 class TrueRule:
 
     """
@@ -31,6 +44,9 @@ class TrueRule:
 
     def evaluate(self, actor):
         return True
+
+    def __eq__(self, other):
+        return other.__class__ is TrueRule
 
     
 class FalseRule:
@@ -43,6 +59,9 @@ class FalseRule:
     def evaluate(self, actor):
         return False
 
+    def __eq__(self, other):
+        return other.__class__ is FalseRule
+
 
 class TagRule:
     def __init__(self, tag):
@@ -50,6 +69,9 @@ class TagRule:
         
     def evaluate(self, actor):
         return actor.isTaggedWith(self.tag)
+
+    def __eq__(self, other):
+        return (other.__class__ is TagRule) and (self.tag == other.tag)
 
 
 class NameRule:
@@ -59,6 +81,9 @@ class NameRule:
     def evaluate(self, actor):
         return self.name == actor.name
 
+    def __eq__(self, other):
+        return (other.__class__ is NameRule) and (self.name == other.name)
+
 
 class NotRule:
     def __init__(self, baseRule):
@@ -66,11 +91,19 @@ class NotRule:
         
     def evaluate(self, actor):
         return not self.baseRule.evaluate(actor)
+    
+    def __eq__(self, other):
+        return (other.__class__ is NotRule) and \
+               (self.baseRule == other.baseRule)
 
 
 class CompositeRule:
     def __init__(self, baseRules):
         self.baseRules = baseRules
+
+    def __eq__(self, other):
+        return issubclass(other.__class__, CompositeRule) and \
+               (self.baseRules == other.baseRules)
 
 
 class AndRule(CompositeRule):
@@ -82,6 +115,10 @@ class AndRule(CompositeRule):
             if not rule.evaluate(actor): return False
         return True
 
+    def __eq__(self, other):
+        return other.__class__ is AndRule and \
+               CompositeRule.__eq__(self, other)
+
 
 class OrRule(CompositeRule):
     def __init__(self, baseRules):
@@ -91,6 +128,10 @@ class OrRule(CompositeRule):
         for rule in self.baseRules:
             if rule.evaluate(actor): return True
         return False
+
+    def __eq__(self, other):
+        return other.__class__ is OrRule and \
+               CompositeRule.__eq__(self, other)
 
 
 class RuleParserError(Exception): pass
