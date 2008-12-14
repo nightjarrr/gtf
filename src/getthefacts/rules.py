@@ -1,3 +1,4 @@
+# coding=UTF-8
 """
     Module: rules.
 
@@ -176,7 +177,7 @@ class RuleParser:
             self.__parseOr(ctx)
         elif ctx.getChar() == "(":
             self.__parseAnd(ctx)
-        elif ctx.getChar().isalphanum():
+        elif ctx.getChar().isalnum():
             self.__parseTag(ctx)
         else:
             ctx.reportError("Invalid rule format: unknown rule at %d." %
@@ -200,13 +201,13 @@ class RuleParser:
 
     def __parseTag(self, ctx):
         """Parse the TagRule from string."""
-        ctx.result = self.__parseText(ctx)
+        ctx.result = TagRule(self.__parseText(ctx))
 
     def __parseName(self, ctx):
         """Parse the NameRule from string."""
         # Skip the "@" character.
         ctx.moveNext()
-        ctx.result = self.__parseText(ctx)
+        ctx.result = NameRule(self.__parseText(ctx))
 
     def __parseNot(self, ctx):
         """Parse the NotRule from string."""
