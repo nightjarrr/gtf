@@ -1,9 +1,9 @@
 # coding=UTF-8
-from taggable import Taggable
 import random
+import rules
 
 
-class Fact(Taggable):
+class Fact:
 
     """
     Defines the fact 'pattern' that can be applied to an actor.
@@ -28,12 +28,12 @@ class Fact(Taggable):
             or bird, and are not big.
     """
 
-    def __init__(self, format, tags = []):
-        Taggable.__init__(self, tags)
+    def __init__(self, format, rule):
         self.format = format
+        self.rule = rule
 
     def isApplicableTo(self, actor):
-        return not self.hasTags() or self.isTaggedWithAny(actor.tags)
+        return self.rule.evaluate(actor)
 
     def getFactAbout(self, actor):
         "Creates the concrete fact which is is built from the fact pattern and the specified actor"
@@ -69,11 +69,9 @@ class FactFormatter:
     def read(self, factString):
         if factString.find("|") == -1:
             return Fact(factString.strip())
-        [format, tagList] = factString.split("|", 1)
-        tags = [tag.strip() for tag in tagList.split(",")]
-        return Fact(format, tags)
+        [format, ruleString] = factString.split("|", 1)
+        rule = rules.RuleParser(ruleString).parse()
+        return Fact(format, rule)
 
     def write(self, fact):
-        if fact.hasTags():
-            return "%s| " % fact.format + ", ".join(fact.tags)
-        else: return fact.format
+        pass
