@@ -60,9 +60,10 @@ class FactChooser:
         if self.cache.has_key(actor.name):
             applicableFacts = self.cache[actor.name]
         else:
-            # Filter the available facts and select only facts applicable to the specified actor.
-            applicableFacts = [fact for fact in self.facts if fact.isApplicableTo(actor)]
-            # Add the filtered list to cache, to avoid doing the same work in future.
+            # Filter facts: select only facts applicable to specified actor.
+            applicableFacts = [fact for fact in self.facts
+                               if fact.isApplicableTo(actor)]
+            # Add filtered list to cache.
             self.cache[actor.name] = applicableFacts
             
         if len(applicableFacts) == 0:
