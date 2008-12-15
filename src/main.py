@@ -46,5 +46,3 @@ if __name__ == "__main__":
     else:
         print _("Here is something interesting:\n")
         print chosenFact.getFactAbout(actor)
-    print _("\nPress 'Enter' to exit.")
-    raw_input()
