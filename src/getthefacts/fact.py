@@ -28,21 +28,26 @@ class Fact:
             or bird, and are not big.
     """
 
-    def __init__(self, format, rule):
+    def __init__(self, format, rule = rules.TrueRule()):
+        """Initialize new instance of Fact."""
         self.format = format
         self.rule = rule
 
     def isApplicableTo(self, actor):
+        """Return True if fact's rule evaluates to True on specifies actor."""
         return self.rule.evaluate(actor)
 
     def getFactAbout(self, actor):
-        "Creates the concrete fact which is is built from the fact pattern and the specified actor"
+        """Create concrete fact from fact pattern and specified actor."""
         return self.format % actor.name
 
+
 class FactChooser:
-    "Lets choose a random fact for an actor that matches actor's tags"
+
+    """Choose random fact that is applicable to actor."""
 
     def __init__(self, facts):
+        """Initialize new instance of FactChooser."""
         self.facts = facts
         # The dictionary where actors are mapped to the lists of facts
         # that are applicable to them.
@@ -50,6 +55,7 @@ class FactChooser:
         random.seed();
 
     def choose(self, actor):
+        """Choose random fact that is applicable to actor."""
         applicableFacts = []
         if self.cache.has_key(actor.name):
             applicableFacts = self.cache[actor.name]
@@ -63,10 +69,13 @@ class FactChooser:
             return None
         return random.choice(applicableFacts)
 
+
 class FactFormatter:
-    "Enables saving and loading Facts to string"
+
+    """Read and write Facts to and from string."""
 
     def read(self, factString):
+        """Read fact from string representation and return Fact instance."""
         if factString.find("|") == -1:
             return Fact(factString.strip())
         [format, ruleString] = factString.split("|", 1)
@@ -74,4 +83,5 @@ class FactFormatter:
         return Fact(format, rule)
 
     def write(self, fact):
+        """Write fact to string representation."""
         pass
