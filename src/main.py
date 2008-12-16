@@ -1,11 +1,15 @@
 # coding=UTF-8
+import cmd
+import random
+import gettext
 from getthefacts.fact import *
 from getthefacts.actor import *
-import random
-import cmd
 
-#t = gettext.translation("getthefacts", "lang")
-_ = lambda msg: msg#t.gettext
+try:
+    t = gettext.translation("getthefacts", "lang")
+    _ = t.gettext
+except:
+    _ = lambda msg: msg
 
 __version__ = "0.2a1"
 
