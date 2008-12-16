@@ -43,6 +43,14 @@ class TagRuleParserTests(unittest.TestCase):
         rule = p.parse()
         assert rule == TagRule("little bear")
 
+    def testFail(self):
+        self.assertRaises(RuleParserError, RuleParser("bear,").parse)
+        self.assertRaises(RuleParserError, RuleParser("bear(").parse)
+        self.assertRaises(RuleParserError, RuleParser("bear)").parse)
+        self.assertRaises(RuleParserError, RuleParser("bear[").parse)
+        self.assertRaises(RuleParserError, RuleParser("bear]").parse)
+        self.assertRaises(RuleParserError, RuleParser("bear!").parse)
+        self.assertRaises(RuleParserError, RuleParser("bear@").parse)
 
 class AndRuleParserTests(unittest.TestCase):
     
