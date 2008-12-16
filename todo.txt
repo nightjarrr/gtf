@@ -1,5 +1,10 @@
 The list of improvements in code, ifrastructure, etc.
 
-1. Versioning of packages and applications.
-2. Logging
-3. Configuration
+		FEATURE												STATUS				TARGET
+		
+	- 	versioning of packages and applications.			DONE				0.2
+	-	trunk/branch/tags repository structure				PENDING				0.2
+	-	i18n & l10n											PENDING				0.2
+	- 	logging												PENDING				TBD
+	-	feature-rich front-end								PENDING				0.2.1
+	- 	configuration										PENDING				TBD
