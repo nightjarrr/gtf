@@ -220,7 +220,9 @@ class RuleParser:
         """
         self.__skipWhitespace(ctx)
 
-        if ctx.getChar() == "@":
+        if ctx.isEOL():
+            raise RuleParserError, "End of line encountered before rule started"
+        elif ctx.getChar() == "@":
             self.__parseName(ctx)
         elif ctx.getChar() == "!":
             self.__parseNot(ctx)
@@ -246,12 +248,17 @@ class RuleParser:
     def __parseText(self, ctx):
         """Parse the text value and return it as string."""
         if ctx.isEOL():
-            raise RuleParserError, "Unexpected end of line met."
+            raise RuleParserError, ("Unexpected end of line met at %d."
+                                    % (len(ctx.str) - 1))
 
         start = ctx.pos
         while (not ctx.isEOL()) and self.__isTextChar(ctx.getChar()):
             ctx.moveNext()
-        return ctx.str[start:ctx.pos].strip()
+        result = ctx.str[start:ctx.pos].strip()
+        if len(result) == 0:
+            raise RuleParserError, ("Empty textual field encountered at %d." %
+                                    ctx.pos)
+        return result
 
     def __parseTag(self, ctx):
         """Parse the TagRule from string."""
@@ -278,10 +285,8 @@ class RuleParser:
         # Skip the "(".
         ctx.moveNext()
         self.__skipWhitespace(ctx)
-        if ctx.isEOL():
-            raise RuleParserError, "Unexpected end of line met."
         rules = []
-        while not ctx.isEOL() and (ctx.getChar() != ")"):
+        while not ctx.isEOL() and ctx.getChar() != ")":
             r = self.__parseRule(ctx)
             rules.append(r)
             self.__skipWhitespace(ctx)
@@ -290,12 +295,19 @@ class RuleParser:
                 # then move to the start of the next rule.
                 ctx.moveNext()
                 self.__skipWhitespace(ctx)
+                if ctx.getChar() == ")":
+                    raise RuleParserError, ("Unexpected closing brace"
+                                            "encountered at %d." % ctx.pos)
+        
+        if ctx.isEOL():
+            raise RuleParserError, ("End of line is encountered before"
+                                   "closing brace.")
 
-        if not ctx.isEOL() and (ctx.getChar() == ")"):
+        if ctx.getChar() == ")":
             ctx.moveNext()
 
         if len(rules) == 0:
-            raise RuleParserError, "Incorrect or empty And rule definition. "
+            raise RuleParserError, "Incorrect or empty And rule definition."
 
         ctx.result = AndRule(rules)
 
@@ -304,8 +316,6 @@ class RuleParser:
         # Skip the "[".
         ctx.moveNext()
         self.__skipWhitespace(ctx)
-        if ctx.isEOL():
-            raise RuleParserError, "Unexpected end of line met."
         rules = []
         while not ctx.isEOL() and (ctx.getChar() != "]"):
             r = self.__parseRule(ctx)
@@ -316,8 +326,15 @@ class RuleParser:
                 # then move to the start of the next rule.
                 ctx.moveNext()
                 self.__skipWhitespace(ctx)
+                if ctx.getChar() == "]":
+                    raise RuleParserError, ("Unexpected closing brace"
+                                            "encountered at %d." % ctx.pos)
 
-        if not ctx.isEOL() and (ctx.getChar() == "]"):
+        if ctx.isEOL():
+            raise RuleParserError, ("End of line is encountered before"
+                                   "closing brace.")
+
+        if ctx.getChar() == "]":
             ctx.moveNext()
 
 
