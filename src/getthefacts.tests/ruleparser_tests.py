@@ -43,14 +43,6 @@ class TagRuleParserTests(unittest.TestCase):
         rule = p.parse()
         assert rule == TagRule("little bear")
 
-    def testFailIfReservedSymbolAtEol(self):
-        self.assertRaises(RuleParserError, RuleParser("bear,").parse)
-        self.assertRaises(RuleParserError, RuleParser("bear(").parse)
-        self.assertRaises(RuleParserError, RuleParser("bear)").parse)
-        self.assertRaises(RuleParserError, RuleParser("bear[").parse)
-        self.assertRaises(RuleParserError, RuleParser("bear]").parse)
-        self.assertRaises(RuleParserError, RuleParser("bear!").parse)
-        self.assertRaises(RuleParserError, RuleParser("bear@").parse)
 
 class AndRuleParserTests(unittest.TestCase):
     
@@ -131,6 +123,108 @@ class OrRuleParserTests(unittest.TestCase):
                                                 TagRule("toy")]),
                                         TagRule("big")])])
 
+
+class InvalidInputTests(unittest.TestCase):
+    
+    def testIfStartsWithInvalidSymbol(self):
+        self.assertRaises(RuleParserError, RuleParser(",tag1").parse)
+        self.assertRaises(RuleParserError, RuleParser(")tag1").parse)
+        self.assertRaises(RuleParserError, RuleParser("]tag1").parse)
+
+    def testFailIfEmptyTag(self):
+        self.assertRaises(RuleParserError, RuleParser("").parse)
+
+    def testFailIfReservedSymbolAtEol(self):
+        self.assertRaises(RuleParserError, RuleParser("tag1,").parse)
+        self.assertRaises(RuleParserError, RuleParser("tag1(").parse)
+        self.assertRaises(RuleParserError, RuleParser("tag1)").parse)
+        self.assertRaises(RuleParserError, RuleParser("tag1[").parse)
+        self.assertRaises(RuleParserError, RuleParser("tag1]").parse)
+        self.assertRaises(RuleParserError, RuleParser("tag1!").parse)
+        self.assertRaises(RuleParserError, RuleParser("tag1@").parse)
+
+    def testFailIfComplexRuleWithoutBraces(self):
+        self.assertRaises(RuleParserError, RuleParser("tag1,tag2").parse)
+        self.assertRaises(RuleParserError, RuleParser("!tag1,tag2").parse)
+        self.assertRaises(RuleParserError, RuleParser("@tag1,tag2").parse)
+        self.assertRaises(RuleParserError, RuleParser("[tag1],tag2").parse)
+        self.assertRaises(RuleParserError, RuleParser("(tag1),tag2").parse)
+        self.assertRaises(RuleParserError, RuleParser("tag1,(tag2)").parse)
+        self.assertRaises(RuleParserError, RuleParser("tag1,[tag2]").parse)
+        self.assertRaises(RuleParserError, RuleParser("[tag1],[tag2]").parse)
+        self.assertRaises(RuleParserError, RuleParser("(tag1),[tag2]").parse)
+        self.assertRaises(RuleParserError, RuleParser("[tag1],(tag2)").parse)
+        self.assertRaises(RuleParserError, RuleParser("(tag1),(tag2)").parse)
+
+
+    def testFailIfAndBraceNotClosed(self):
+        self.assertRaises(RuleParserError, RuleParser("(tag1").parse)
+        self.assertRaises(RuleParserError, RuleParser("((tag1").parse)
+        self.assertRaises(RuleParserError, RuleParser("((tag1)").parse)
+        self.assertRaises(RuleParserError, RuleParser("([tag1]").parse)
+        self.assertRaises(RuleParserError, RuleParser("[(tag1]").parse)
+
+    def testFailIfOrBraceNotClosed(self):
+        self.assertRaises(RuleParserError, RuleParser("[tag1").parse)
+        self.assertRaises(RuleParserError, RuleParser("[[tag1").parse)
+        self.assertRaises(RuleParserError, RuleParser("[[tag1]").parse)
+        self.assertRaises(RuleParserError, RuleParser("[(tag1)").parse)
+        self.assertRaises(RuleParserError, RuleParser("([tag1)").parse)
+
+    def testFailIfNotMatchingBraces(self):
+        self.assertRaises(RuleParserError, RuleParser("(tag1]").parse)
+        self.assertRaises(RuleParserError, RuleParser("[tag1)").parse)
+
+    def testFailIfEmptyBraces(self):
+        self.assertRaises(RuleParserError, RuleParser("[]").parse)
+        self.assertRaises(RuleParserError, RuleParser("()").parse)
+        self.assertRaises(RuleParserError, RuleParser("(]").parse)
+        self.assertRaises(RuleParserError, RuleParser("[)").parse)
+
+    def testFailIfSingleCommaInsideBraces(self):
+        self.assertRaises(RuleParserError, RuleParser("[,]").parse)
+        self.assertRaises(RuleParserError, RuleParser("(,)").parse)
+
+    def testFailIfNoSeparatorBetweenRules(self):
+        self.assertRaises(RuleParserError, RuleParser("tag1[tag2]").parse)
+        self.assertRaises(RuleParserError, RuleParser("tag1(tag2)").parse)
+        self.assertRaises(RuleParserError, RuleParser("tag1!tag2").parse)
+        self.assertRaises(RuleParserError, RuleParser("tag1@name1").parse)
+        self.assertRaises(RuleParserError, RuleParser("[tag1][tag2]").parse)
+        self.assertRaises(RuleParserError, RuleParser("(tag1)[tag2]").parse)
+        self.assertRaises(RuleParserError, RuleParser("[tag1](tag2)").parse)
+        self.assertRaises(RuleParserError, RuleParser("(tag1)(tag2)").parse)
+        self.assertRaises(RuleParserError, RuleParser("[tag1]tag2").parse)
+        self.assertRaises(RuleParserError, RuleParser("(tag1)tag2").parse)
+        self.assertRaises(RuleParserError, RuleParser("[tag1]@name1").parse)
+        self.assertRaises(RuleParserError, RuleParser("(tag1)!tag2").parse)
+
+    def testFailIfEmptyNameRule(self):
+        self.assertRaises(RuleParserError, RuleParser("@").parse)
+        self.assertRaises(RuleParserError, RuleParser("!@").parse)
+        self.assertRaises(RuleParserError, RuleParser("[@]").parse)
+        self.assertRaises(RuleParserError, RuleParser("(@)").parse)
+
+    def testFailIfEmptyNotRule(self):
+        self.assertRaises(RuleParserError, RuleParser("!").parse)
+        self.assertRaises(RuleParserError, RuleParser("[!]").parse)
+        self.assertRaises(RuleParserError, RuleParser("(!)").parse)
+
+    def testFailIfEmptyRuleInsideAndRule(self):
+        self.assertRaises(RuleParserError, RuleParser("(@)").parse)
+        self.assertRaises(RuleParserError, RuleParser("(,tag1)").parse)
+        self.assertRaises(RuleParserError, RuleParser("(tag1,)").parse)
+        self.assertRaises(RuleParserError, RuleParser("(tag1,,)").parse)
+        self.assertRaises(RuleParserError, RuleParser("(tag1,,tag2)").parse)
+        self.assertRaises(RuleParserError, RuleParser("(,,tag1)").parse)
+
+    def testFailIfEmptyRuleInsideOrRule(self):
+        self.assertRaises(RuleParserError, RuleParser("[@]").parse)
+        self.assertRaises(RuleParserError, RuleParser("[,tag1]").parse)
+        self.assertRaises(RuleParserError, RuleParser("[tag1,]").parse)
+        self.assertRaises(RuleParserError, RuleParser("[tag1,,]").parse)
+        self.assertRaises(RuleParserError, RuleParser("[tag1,,tag2]").parse)
+        self.assertRaises(RuleParserError, RuleParser("[,,tag1]").parse)
 
 if __name__ == "__main__":
     unittest.main()
