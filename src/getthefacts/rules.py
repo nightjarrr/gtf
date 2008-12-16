@@ -245,6 +245,11 @@ class RuleParser:
         """Return True, if specified character is a text character."""
         return not ch in self.RESERVED
 
+    def __moveNext(self, ctx):
+        if not ctx.isEOL():
+            ctx.moveNext()
+            self.__skipWhitespace(ctx)
+
     def __parseText(self, ctx):
         """Parse the text value and return it as string."""
         if ctx.isEOL():
@@ -273,8 +278,7 @@ class RuleParser:
     def __parseNot(self, ctx):
         """Parse the NotRule from string."""
         # Skip the "!" character.
-        ctx.moveNext()
-        self.__skipWhitespace(ctx)
+        self.__moveNext(ctx)
         if ctx.isEOL():
             raise RuleParserError, "Unexpected end of line met."
         # Wrap the rule next to "!" into the NotRule.
@@ -283,18 +287,15 @@ class RuleParser:
     def __parseAnd(self, ctx):
         """Parse the AndRule from string."""
         # Skip the "(".
-        ctx.moveNext()
-        self.__skipWhitespace(ctx)
+        self.__moveNext(ctx)
         rules = []
         while not ctx.isEOL() and ctx.getChar() != ")":
             r = self.__parseRule(ctx)
             rules.append(r)
-            self.__skipWhitespace(ctx)
             # If the comma-separated list of rules isn't finished yet.
             if not ctx.isEOL() and ctx.getChar() == ",":
                 # then move to the start of the next rule.
-                ctx.moveNext()
-                self.__skipWhitespace(ctx)
+                self.__moveNext(ctx)
                 if ctx.getChar() == ")":
                     raise RuleParserError, ("Unexpected closing brace"
                                             "encountered at %d." % ctx.pos)
@@ -304,7 +305,7 @@ class RuleParser:
                                    "closing brace.")
 
         if ctx.getChar() == ")":
-            ctx.moveNext()
+            self.__moveNext(ctx)
 
         if len(rules) == 0:
             raise RuleParserError, "Incorrect or empty And rule definition."
@@ -314,18 +315,15 @@ class RuleParser:
     def __parseOr(self, ctx):
         """Parse the OrRule from string."""
         # Skip the "[".
-        ctx.moveNext()
-        self.__skipWhitespace(ctx)
+        self.__moveNext(ctx)
         rules = []
         while not ctx.isEOL() and (ctx.getChar() != "]"):
             r = self.__parseRule(ctx)
             rules.append(r)
-            self.__skipWhitespace(ctx)
             # If the comma-separated list of rules isn't finished yet.
             if not ctx.isEOL() and ctx.getChar() == ",":
                 # then move to the start of the next rule.
-                ctx.moveNext()
-                self.__skipWhitespace(ctx)
+                self.__moveNext(ctx)
                 if ctx.getChar() == "]":
                     raise RuleParserError, ("Unexpected closing brace"
                                             "encountered at %d." % ctx.pos)
@@ -335,8 +333,7 @@ class RuleParser:
                                    "closing brace.")
 
         if ctx.getChar() == "]":
-            ctx.moveNext()
-
+            self.__moveNext(ctx)
 
         if len(rules) == 0:
             raise RuleParserError, "Incorrect or empty Or rule definition. "
