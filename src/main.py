@@ -68,8 +68,9 @@ class GtfCmd(cmd.Cmd):
                 print _("Sorry, I don't know anything about %s.") % actor.name
             else:
                 print fact.getFactAbout(actor)
-        except:
+        except Exception, e:
             print _("Error occurred. Please try once again.")
+            print e
 
     def help_say(self):
         print _("Show a fact about an actor.")
