@@ -16,8 +16,11 @@ __version__ = "0.2a2"
 def readList(fileName, formatter):
     list = []
     try:
-        list = [formatter.read(line) for line in file(fileName).readlines()
+        list = [formatter.read(line.strip()) for line in file(fileName).readlines()
                 if not (line == "\n" or line.startswith("#"))]
+    except Exception, e:
+        print "Error occurred while reading the file %s" % fileName
+        print e
     finally:
         return list
 
