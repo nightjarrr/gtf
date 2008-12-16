@@ -1,10 +1,11 @@
-The list of improvements in code, ifrastructure, etc.
+The list of bugs, improvements in code, ifrastructure, etc.
 
-		FEATURE												STATUS				TARGET
+	KIND		DESCRIPTION											STATUS				TARGET
 		
-	- 	versioning of packages and applications.			DONE				0.2
-	-	trunk/branch/tags repository structure				PENDING				0.2
-	-	i18n & l10n											PENDING				0.2
-	- 	logging												PENDING				TBD
-	-	feature-rich front-end								PENDING				0.2.1
-	- 	configuration										PENDING				TBD
+-	bug			Error with fact formatting							NEW					0.2
+- 	feature		versioning of packages and applications.			DONE				0.2
+-	feature		trunk/branch/tags repository structure				PENDING				0.2
+-	feature		i18n & l10n											PENDING				0.2
+- 	feature		logging												PENDING				TBD
+-	feature		feature-rich front-end								PENDING				0.2.1
+- 	feature		configuration										PENDING				TBD
