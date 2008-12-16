@@ -1,11 +1,16 @@
 # coding=UTF-8
-from getthefacts.rules import RuleParserContext
 from getthefacts.rules import *
 import unittest
 
 class NameRuleParserTests(unittest.TestCase):
     def testParse(self):
         name = "Winnie-The-Pooh"
+        p = RuleParser("@" + name)
+        rule = p.parse()
+        assert rule == NameRule(name)
+
+    def testParseWithSpaces(self):
+        name = "Winnie The Pooh"
         p = RuleParser("@" + name)
         rule = p.parse()
         assert rule == NameRule(name)
@@ -32,6 +37,12 @@ class TagRuleParserTests(unittest.TestCase):
         p = RuleParser("bear")
         rule = p.parse()
         assert rule == TagRule("bear")
+
+    def testParseWithSpaces(self):
+        p = RuleParser("little bear")
+        rule = p.parse()
+        assert rule == TagRule("little bear")
+
 
 class AndRuleParserTests(unittest.TestCase):
     
@@ -77,6 +88,12 @@ class AndRuleParserTests(unittest.TestCase):
         assert rule == RuleParser("(@Baloo, bear, !toy)\t").parse()
         assert rule == RuleParser("(@Baloo, bear, !toy)    ").parse()
 
+    def testParseWithSpaces(self):
+        rule = AndRule([NameRule("Baloo the mighty"), TagRule("big bear"),
+                        NotRule(TagRule("funny toy"))])
+        assert rule == RuleParser("(@Baloo the mighty, big bear, !funny toy)").parse()
+
+        
 class OrRuleParserTests(unittest.TestCase):
     def testParseSimple(self):
         assert OrRule([TagRule("tag1")]) == RuleParser("[tag1]").parse()
