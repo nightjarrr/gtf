@@ -14,9 +14,6 @@ def readList(fileName, formatter):
         return list
 
 if __name__ == "__main__":
-    # Not sure whether this should be permanent or eclipse-specific
-    #os.chdir(os.path.dirname(__file__))
-    
     print _("Welcome!")
     print _("Loading...")
     
