@@ -68,11 +68,28 @@ class GtfCmd(cmd.Cmd):
         except:
             print _("Error occurred. Please try once again.")
 
+    def help_say(self):
+        print _("Show a fact about an actor.")
+        print _("Command format:")
+        print _("")
+        print _("say [name]")
+        print _("")
+        print _("Parameters:")
+        print _("    name (optional): the name of an actor. If the name is "
+                "provided, a fact about this actor is displayed. If the name "
+                "is omitted, a fact about random actor is displayed.")
+
+    def help_help(self):
+        print _("Display this help.")
+
+    def help_quit(self):
+        print _("Quit the program.")
+
 
 if __name__ == "__main__":
     print _("Welcome to GetTheFacts v. %s") % __version__
     cmd = GtfCmd()
-    cmd.intro = _("Type 'say <name>' to learn something interesting about" +
-                  "'name', or 'say' for random fact.")
+    cmd.intro = _("Enter the command. Enter '?' or 'help' for the "
+                  "list of available commands.")
     cmd.prompt = ">>"
     cmd.cmdloop()
