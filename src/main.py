@@ -1,45 +1,74 @@
-import random
 # coding=UTF-8
 from getthefacts.fact import *
 from getthefacts.actor import *
+import random
+import cmd
 
 #t = gettext.translation("getthefacts", "lang")
 _ = lambda msg: msg#t.gettext
 
+__version__ = "0.2a1"
+
 def readList(fileName, formatter):
     list = []
     try:
-        list = [formatter.read(line) for line in file(fileName).readlines() if not (line == "\n" or line.startswith("#"))]
+        list = [formatter.read(line) for line in file(fileName).readlines()
+                if not (line == "\n" or line.startswith("#"))]
     finally:
         return list
 
-if __name__ == "__main__":
-    print _("Welcome!")
-    print _("Loading...")
-    
-    actors = readList("../data/actors.txt", ActorFormatter())
-    facts = readList("../data/facts.txt", FactFormatter())
-    print _("Loaded %d facts and %d actors.") % (len(facts), len(actors))
-    print _("\nEnter the actor name or 'Enter' for random:")
-    actorName = raw_input().strip()
-    
-    actor = None
-    if actorName == "":
-        actor = random.choice(actors)
-    else:
-        foundActor = False
-        for a in actors:
-            if a.name == actorName:
-                actor = a
-                foundActor = True
-                break
-        if not foundActor:
-            actor = Actor(actorName)
+class GtfCmd(cmd.Cmd):
 
-    chooser = FactChooser(facts)
-    chosenFact = chooser.choose(actor)
-    if chosenFact == None:
-        print _("Sorry, I don't know anything about %s.") % actorName
-    else:
-        print _("Here is something interesting:\n")
-        print chosenFact.getFactAbout(actor)
+    def __init__(self):
+        cmd.Cmd.__init__(self, "\t")
+        self.actors = []
+        self.facts = []
+
+    def preloop(self):
+        self.actors = readList("../data/actors.txt", ActorFormatter())
+        self.facts = readList("../data/facts.txt", FactFormatter())
+        self.chooser = FactChooser(self.facts)
+        print _("Loaded %d facts and %d actors.") % (len(self.facts),
+                                                     len(self.actors))
+
+    def postcmd(self, stop, line):
+        return stop
+
+    def do_quit(self, line):
+        return True
+
+    def do_say(self, name):
+        actor = None
+        if len(name) == 0:
+            actor = self.__getRandomActor()
+        else:
+            actor = self.__findActor(name)
+        self.__say_about(actor)
+        return False
+
+    def __getRandomActor(self):
+        return random.choice(self.actors)
+
+    def __findActor(self, name):
+        for a in self.actors:
+            if a.name == name:
+                return a
+
+    def __say_about(self, actor):
+        try:
+            fact = self.chooser.choose(actor)
+            if fact == None:
+                print _("Sorry, I don't know anything about %s.") % actor.name
+            else:
+                print fact.getFactAbout(actor)
+        except:
+            print _("Error occurred. Please try once again.")
+
+
+if __name__ == "__main__":
+    print _("Welcome to GetTheFacts v. %s") % __version__
+    cmd = GtfCmd()
+    cmd.intro = _("Type 'say <name>' to learn something interesting about" +
+                  "'name', or 'say' for random fact.")
+    cmd.prompt = ">>"
+    cmd.cmdloop()
