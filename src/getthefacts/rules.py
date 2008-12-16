@@ -207,7 +207,12 @@ class RuleParser:
         is raised.
         """
         ctx = RuleParserContext(self.str, 0)
-        return self.__parseRule(ctx)
+        rule = self.__parseRule(ctx)
+        self.__skipWhitespace(ctx)
+        if not ctx.isEOL():
+            raise RuleParserError, ("Unexpected characters found after the end "
+                                    "of the rule at %d") % ctx.pos
+        return rule
 
     def __parseRule(self, ctx):
         """
@@ -240,6 +245,9 @@ class RuleParser:
 
     def __parseText(self, ctx):
         """Parse the text value and return it as string."""
+        if ctx.isEOL():
+            raise RuleParserError, "Unexpected end of line met."
+
         start = ctx.pos
         while (not ctx.isEOL()) and self.__isTextChar(ctx.getChar()):
             ctx.moveNext()
@@ -260,6 +268,8 @@ class RuleParser:
         # Skip the "!" character.
         ctx.moveNext()
         self.__skipWhitespace(ctx)
+        if ctx.isEOL():
+            raise RuleParserError, "Unexpected end of line met."
         # Wrap the rule next to "!" into the NotRule.
         ctx.result = NotRule(self.__parseRule(ctx))
 
@@ -268,6 +278,8 @@ class RuleParser:
         # Skip the "(".
         ctx.moveNext()
         self.__skipWhitespace(ctx)
+        if ctx.isEOL():
+            raise RuleParserError, "Unexpected end of line met."
         rules = []
         while not ctx.isEOL() and (ctx.getChar() != ")"):
             r = self.__parseRule(ctx)
@@ -292,6 +304,8 @@ class RuleParser:
         # Skip the "[".
         ctx.moveNext()
         self.__skipWhitespace(ctx)
+        if ctx.isEOL():
+            raise RuleParserError, "Unexpected end of line met."
         rules = []
         while not ctx.isEOL() and (ctx.getChar() != "]"):
             r = self.__parseRule(ctx)
