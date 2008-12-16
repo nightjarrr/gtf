@@ -6,3 +6,4 @@ syntax: regexp
 .po$
 .mo$
 .orig$
+.py.class$
