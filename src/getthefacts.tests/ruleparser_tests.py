@@ -43,7 +43,7 @@ class TagRuleParserTests(unittest.TestCase):
         rule = p.parse()
         assert rule == TagRule("little bear")
 
-    def testFail(self):
+    def testFailIfReservedSymbolAtEol(self):
         self.assertRaises(RuleParserError, RuleParser("bear,").parse)
         self.assertRaises(RuleParserError, RuleParser("bear(").parse)
         self.assertRaises(RuleParserError, RuleParser("bear)").parse)
