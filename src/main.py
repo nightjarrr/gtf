@@ -11,7 +11,7 @@ try:
 except:
     _ = lambda msg: msg
 
-__version__ = "0.2a2"
+__version__ = "0.2"
 
 def readList(fileName, formatter):
     list = []
