@@ -54,6 +54,14 @@ class Fact:
         """Initialize new instance of Fact."""
         self.format = format
         self.rule = rule
+        self.substitutions = self.__findSubstitutions__(format)
+
+    def __findSubstitutions__(self, format):
+        pass
+
+    def __resolveSubstitutions__(self, format):
+        if self.substitutions is None:
+            return format
 
     def isApplicableTo(self, actor):
         """Return True if fact's rule evaluates to True on specifies actor."""
@@ -61,7 +69,8 @@ class Fact:
 
     def getFactAbout(self, actor):
         """Create concrete fact from fact pattern and specified actor."""
-        return self.format % actor.name
+        fmt = self.__resolveSubstitutions__(self.format)
+        return fmt % actor.name
 
 
 class FactChooser:
