@@ -25,6 +25,8 @@ class Substitution:
     def resolve(self, fact):
         return fact.replace(self.subst, self.__choose__())
 
+class FactFormatError(Exception): pass
+
 class Fact:
 
     """
@@ -54,14 +56,22 @@ class Fact:
         """Initialize new instance of Fact."""
         self.format = format
         self.rule = rule
-        self.substitutions = self.__findSubstitutions__(format)
+        self.__findSubstitutions__(format)
 
     def __findSubstitutions__(self, format):
-        pass
+        self.substitutions = []
+        s = format.split("[")
+        if len(s) != len(format.split("]")):
+            raise FactFormatError()
+        for subst in s:
+            if "]" in subst:
+                subst = subst[0 : subst.find("]")]
+                self.substitutions.append(Substitution("[" + subst + "]"))
 
     def __resolveSubstitutions__(self, format):
-        if self.substitutions is None:
-            return format
+        for s in self.substitutions:
+            format = s.resolve(format)
+        return format
 
     def isApplicableTo(self, actor):
         """Return True if fact's rule evaluates to True on specifies actor."""
