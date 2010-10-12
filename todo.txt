@@ -1,4 +1,8 @@
 
+Further:
+ * Multiple actors for a fact
+    $1 is a $2.
+
 0.3
  * Multiline format for facts
     -----
@@ -6,7 +10,5 @@
     -
     $1: (tree)
     -----
- * Multiple actors for a fact
-    $1 is a $2.
  * Inplace substitutions in a fact
     $1 is a [big, beautilful] tree.
