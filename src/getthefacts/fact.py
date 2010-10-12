@@ -2,6 +2,28 @@
 import random
 import rules
 
+# Seed the random generator when the module is imported.
+random.seed();
+
+class Substitution:
+    """
+    Substitution is a variable part of fact that consists of several possible
+    choices which are injected in the resulted fact randomly.
+    For example:
+        %s is a [big, beautiful] tree.
+        [big, beautiful] is a substitution, and a resulting fact may have 2 variants:
+        %s is a big tree.
+        %s is a beautiful tree.
+    """
+    def __init__(self, subst):
+        self.subst = subst
+        self.choices = [s.strip() for s in subst.strip().lstrip("[").rstrip("]").split(",")]
+
+    def __choose__(self):
+        return random.choice(self.choices)
+
+    def resolve(self, fact):
+        return fact.replace(self.subst, self.__choose__())
 
 class Fact:
 
@@ -52,7 +74,6 @@ class FactChooser:
         # The dictionary where actors are mapped to the lists of facts
         # that are applicable to them.
         self.cache = {}
-        random.seed();
 
     def choose(self, actor):
         """Choose random fact that is applicable to actor."""
