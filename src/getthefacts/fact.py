@@ -83,6 +83,3 @@ class FactFormatter:
         rule = rules.RuleParser(ruleString).parse()
         return Fact(format, rule)
 
-    def write(self, fact):
-        """Write fact to string representation."""
-        pass
