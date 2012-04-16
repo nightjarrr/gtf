@@ -27,6 +27,29 @@ class Substitution:
 
 class FactFormatError(Exception): pass
 
+class ActorPlaceholder():
+    def __init__(self, index, rule):
+        self.index = index
+        self.rule = rule
+        self.actor = None
+
+    def set_actor(self, actor):
+        self.actor = actor
+
+class FactTemplate():
+    """
+    The abstract class that defines basic functionality of fact template.
+    Fact template defines the format of fact pattern and how actor placeholders are specified
+    """
+    def parse(self):
+        """Parses the underlying template and returns a list of ActorPlaceholders defined in the template."""
+        pass
+
+    def render(self, actors):
+        """Renders the underlying template using the provided list of ActorPlaceholders
+        with filled-in Actor instances."""
+        pass
+
 class Fact:
 
     """
