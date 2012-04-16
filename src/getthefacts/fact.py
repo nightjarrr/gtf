@@ -75,36 +75,19 @@ class Fact:
             or bird, and are not big.
     """
 
-    def __init__(self, format, rule = rules.TrueRule()):
-        """Initialize new instance of Fact."""
-        self.format = format
-        self.rule = rule
-        self.__findSubstitutions__(format)
-
-    def __findSubstitutions__(self, format):
-        self.substitutions = []
-        s = format.split("[")
-        if len(s) != len(format.split("]")):
-            raise FactFormatError()
-        for subst in s:
-            if "]" in subst:
-                subst = subst[0 : subst.find("]")]
-                self.substitutions.append(Substitution("[" + subst + "]"))
-
-    def __resolveSubstitutions__(self, format):
-        for s in self.substitutions:
-            format = s.resolve(format)
-        return format
+    def __init__(self, template):
+        self.template = template
+        self.actorPlaceholders = template.parse()
 
     def isApplicableTo(self, actor):
         """Return True if fact's rule evaluates to True on specifies actor."""
-        return self.rule.evaluate(actor)
+        return self.actorPlaceholders[0].rule.evaluate(actor)
 
     def getFactAbout(self, actor):
         """Create concrete fact from fact pattern and specified actor."""
-        fmt = self.__resolveSubstitutions__(self.format)
-        return fmt % actor.name
-
+        ap = self.actorPlaceholders[:]
+        ap[0].set_actor(actor)
+        return self.template.render(ap)
 
 class FactChooser:
 
@@ -133,16 +116,54 @@ class FactChooser:
             return None
         return random.choice(applicableFacts)
 
+class SimpleStringFactTemplate(FactTemplate):
+    """
+    Fact Template that defines current format of facts:
+     - Single actor supported
+     - Actor placeholder is '%s'
+     - Substitutions supported
+     - Single-line
+     - Fact pattern separated from rule definition by '|'
+     - Rule definition section is optional
+    """
+
+    def __init__(self, factString):
+        self.factString = factString
+
+    def parse(self):
+        rule = rules.TrueRule()
+        format = self.factString
+        if self.factString.find("|") > -1:
+            [format, ruleString] = self.factString.split("|", 1)
+            rule = rules.RuleParser(ruleString).parse()
+        self.format = format
+        self.__findSubstitutions__()
+        return [ActorPlaceholder(0, rule)]
+
+    def render(self, actors):
+        fmt = self.__resolveSubstitutions__()
+        return fmt % actors[0].actor.name
+
+    def __resolveSubstitutions__(self):
+        f = self.format
+        for s in self.substitutions:
+            f = s.resolve(f)
+        return f
+
+    def __findSubstitutions__(self):
+        self.substitutions = []
+        s = self.format.split("[")
+        if len(s) != len(self.format.split("]")):
+            raise FactFormatError()
+        for subst in s:
+            if "]" in subst:
+                subst = subst[0 : subst.find("]")]
+                self.substitutions.append(Substitution("[" + subst + "]"))
 
 class FactFormatter:
 
     """Read and write Facts to and from string."""
 
     def read(self, factString):
-        """Read fact from string representation and return Fact instance."""
-        if factString.find("|") == -1:
-            return Fact(factString.strip())
-        [format, ruleString] = factString.split("|", 1)
-        rule = rules.RuleParser(ruleString).parse()
-        return Fact(format, rule)
-
+        t = SimpleStringFactTemplate(factString)
+        return Fact(t)
