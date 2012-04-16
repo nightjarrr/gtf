@@ -7,3 +7,4 @@ syntax: regexp
 .mo$
 .orig$
 .py.class$
+.coverage$
