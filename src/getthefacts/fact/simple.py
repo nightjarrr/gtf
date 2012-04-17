@@ -47,7 +47,11 @@ class SimpleStringFactTemplate(FactTemplate):
             rule = rules.RuleParser(ruleString).parse()
         self.format = format
         self.__findSubstitutions__()
-        return [ActorPlaceholder(0, rule)]
+        hasActorplaceholder = self.factString.find("%s") > -1
+        if hasActorplaceholder:
+            return [ActorPlaceholder(0, rule)]
+        else:
+            return []
 
     def render(self, actors):
         fmt = self.__resolveSubstitutions__()

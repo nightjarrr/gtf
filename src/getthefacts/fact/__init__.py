@@ -68,7 +68,7 @@ class Fact:
         self.actorPlaceholders = actorPlaceholders
 
     def ready(self):
-        return all([a.has_actor() for a in self.actorPlaceholders])
+        return len(self.actorPlaceholders) == 0 or all([a.has_actor() for a in self.actorPlaceholders])
 
     def isApplicableTo(self, actor):
         """Return True if fact's rule evaluates to True on specifies actor."""
