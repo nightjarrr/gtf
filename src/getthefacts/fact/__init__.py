@@ -1,6 +1,6 @@
 # coding=UTF-8
 import random
-import rules
+from .. import rules
 
 # Seed the random generator when the module is imported.
 random.seed();
