@@ -36,3 +36,10 @@ class RandomFactChooserTests(unittest.TestCase):
 		chooser = RandomFactChooser([template], None)
 		c = chooser.choose()
 		assert c is None
+
+	def testNonFittingActorRendersNone(self):
+		template = SimpleStringFactTemplate("%s is out there.|truth")
+		actor = Actor("The truth")
+		chooser = RandomFactChooser([template], [actor])
+		c = chooser.choose()
+		assert c is None
