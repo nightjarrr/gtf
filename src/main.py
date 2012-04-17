@@ -2,7 +2,7 @@
 import cmd
 import random
 import gettext
-from getthefacts.fact import *
+from getthefacts.fact.simple import SimpleStringFactFormatter
 from getthefacts.actor import *
 
 try:
@@ -33,7 +33,7 @@ class GtfCmd(cmd.Cmd):
 
     def preloop(self):
         self.actors = readList("../data/actors.txt", ActorFormatter())
-        self.facts = readList("../data/facts.txt", FactFormatter())
+        self.facts = readList("../data/facts.txt", SimpleStringFactFormatter())
         self.chooser = FactChooser(self.facts)
         print _("Loaded %d facts and %d actors.") % (len(self.facts),
                                                      len(self.actors))
