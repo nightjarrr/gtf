@@ -1,8 +1,8 @@
 # coding=UTF-8
 import unittest
 import re
-from getthefacts.fact import Substitution
-from getthefacts.fact import Fact, SimpleStringFactFormatter, SimpleStringFactTemplate, FactFormatError
+from getthefacts.fact import Fact, FactFormatError
+from getthefacts.fact.simple import Substitution, SimpleStringFactFormatter, SimpleStringFactTemplate
 from getthefacts.actor import Actor
 
 class SubstitutionTests(unittest.TestCase):
