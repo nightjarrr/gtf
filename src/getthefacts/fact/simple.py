@@ -36,9 +36,10 @@ class SimpleStringFactTemplate(FactTemplate):
     """
 
     def __init__(self, factString):
+        FactTemplate.__init__(self)
         self.factString = factString
 
-    def parse(self):
+    def __parse__(self):
         rule = rules.TrueRule()
         format = self.factString
         if self.factString.find("|") > -1:
@@ -50,7 +51,7 @@ class SimpleStringFactTemplate(FactTemplate):
 
     def render(self, actors):
         fmt = self.__resolveSubstitutions__()
-        return fmt % actors[0].actor.name
+        return fmt % actors[0].name
 
     def __resolveSubstitutions__(self):
         f = self.format
@@ -74,4 +75,4 @@ class SimpleStringFactFormatter:
 
     def read(self, factString):
         t = SimpleStringFactTemplate(factString)
-        return Fact(t)
+        return t.buildup()

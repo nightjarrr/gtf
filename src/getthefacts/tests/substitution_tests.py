@@ -31,4 +31,4 @@ class FactSubstitutionTests(unittest.TestCase):
 
     def testInvalidFormatRaisesError(self):
         f = SimpleStringFactTemplate("%s is a [big, beautiful tree.")
-        self.assertRaises(FactFormatError, f.parse)
+        self.assertRaises(FactFormatError, f.buildup)
