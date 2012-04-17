@@ -161,7 +161,7 @@ class SimpleStringFactTemplate(FactTemplate):
                 subst = subst[0 : subst.find("]")]
                 self.substitutions.append(Substitution("[" + subst + "]"))
 
-class FactFormatter:
+class SimpleStringFactFormatter:
 
     """Read and write Facts to and from string."""
 
