@@ -18,3 +18,9 @@ class RandomFactChooserTests(unittest.TestCase):
 		chooser = RandomFactChooser([], [actor])
 		c = chooser.choose()
 		assert c is None
+
+	def testEmptyActorListRendersNone(self):
+		template = SimpleStringFactTemplate("%s is out there.")
+		chooser = RandomFactChooser([template], [])
+		c = chooser.choose()
+		assert c is None

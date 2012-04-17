@@ -23,8 +23,14 @@ class RandomFactChooser(FactChooser):
 
         fact = random.choice(self.facts).buildup()
         actors = self.actors
+        if (len(fact.actorPlaceholders) > 0) \
+            and (actors is None or len(actors) < len(fact.actorPlaceholders)):
+            return None
+
         for placeholder in fact.actorPlaceholders:
             applicable = [actor for actor in actors if placeholder.rule.evaluate(actor)]
+            if len(applicable) == 0:
+                return None
             a = random.choice(applicable)
             placeholder.set_actor(a)
             actors.remove(a)
