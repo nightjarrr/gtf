@@ -18,6 +18,9 @@ class RandomFactChooser(FactChooser):
         FactChooser.__init__(self, facts, actors)
 
     def choose(self):
+        if self.facts is None or len(self.facts) == 0:
+            return None
+
         fact = random.choice(self.facts).buildup()
         actors = self.actors
         for placeholder in fact.actorPlaceholders:
