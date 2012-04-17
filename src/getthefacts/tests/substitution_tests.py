@@ -2,7 +2,7 @@
 import unittest
 import re
 from getthefacts.fact import Substitution
-from getthefacts.fact import Fact, FactFormatter
+from getthefacts.fact import Fact, FactFormatter, SimpleStringFactTemplate, FactFormatError
 from getthefacts.actor import Actor
 
 class SubstitutionTests(unittest.TestCase):
@@ -29,5 +29,6 @@ class FactSubstitutionTests(unittest.TestCase):
         s = f.getFactAbout(Actor("Oak"))
         assert s in ["Oak is a beautiful tree.", "Oak is a big tree."]
 
-
-
+    def testInvalidFormatRaisesError(self):
+        f = SimpleStringFactTemplate("%s is a [big, beautiful tree.")
+        self.assertRaises(FactFormatError, f.parse)
