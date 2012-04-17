@@ -12,3 +12,9 @@ class RandomFactChooserTests(unittest.TestCase):
 		c = chooser.choose()
 		assert c is not None
 		assert c == "The truth is out there."
+
+	def testEmptyFactListRendersNone(self):
+		actor = Actor("The truth")
+		chooser = RandomFactChooser([], [actor])
+		c = chooser.choose()
+		assert c is None
