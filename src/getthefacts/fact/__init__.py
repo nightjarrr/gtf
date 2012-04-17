@@ -1,9 +1,5 @@
 # coding=UTF-8
-import random
 from .. import rules
-
-# Seed the random generator when the module is imported.
-random.seed();
 
 class FactFormatError(Exception): pass
 
@@ -16,14 +12,26 @@ class ActorPlaceholder():
     def set_actor(self, actor):
         self.actor = actor
 
+    def has_actor(self):
+        return self.actor is not None
+
 class FactTemplate():
     """
     The abstract class that defines basic functionality of fact template.
     Fact template defines the format of fact pattern and how actor placeholders are specified
     """
-    def parse(self):
+    def __init__(self):
+        self.__parsed__ = False
+
+    def __parse__(self):
         """Parses the underlying template and returns a list of ActorPlaceholders defined in the template."""
         pass
+
+    def buildup(self):
+        """Returns an instance of Fact built from the template."""
+        if not self.__parsed__:
+            self.__actorPlaceholders__ = self.__parse__()
+        return Fact(self, self.__actorPlaceholders__[:])
 
     def render(self, actors):
         """Renders the underlying template using the provided list of ActorPlaceholders
@@ -55,43 +63,22 @@ class Fact:
             or bird, and are not big.
     """
 
-    def __init__(self, template):
+    def __init__(self, template, actorPlaceholders):
         self.template = template
-        self.actorPlaceholders = template.parse()
+        self.actorPlaceholders = actorPlaceholders
+
+    def ready(self):
+        return all([a.has_actor() for a in self.actorPlaceholders])
 
     def isApplicableTo(self, actor):
         """Return True if fact's rule evaluates to True on specifies actor."""
-        return self.actorPlaceholders[0].rule.evaluate(actor)
+        return any([a.rule.evaluate(actor) for a in self.actorPlaceholders])
 
     def getFactAbout(self, actor):
         """Create concrete fact from fact pattern and specified actor."""
-        ap = self.actorPlaceholders[:]
-        ap[0].set_actor(actor)
-        return self.template.render(ap)
+        self.actorPlaceholders[0].set_actor(actor)
+        return self.render()
 
-class FactChooser:
-
-    """Choose random fact that is applicable to actor."""
-
-    def __init__(self, facts):
-        """Initialize new instance of FactChooser."""
-        self.facts = facts
-        # The dictionary where actors are mapped to the lists of facts
-        # that are applicable to them.
-        self.cache = {}
-
-    def choose(self, actor):
-        """Choose random fact that is applicable to actor."""
-        applicableFacts = []
-        if self.cache.has_key(actor.name):
-            applicableFacts = self.cache[actor.name]
-        else:
-            # Filter facts: select only facts applicable to specified actor.
-            applicableFacts = [fact for fact in self.facts
-                               if fact.isApplicableTo(actor)]
-            # Add filtered list to cache.
-            self.cache[actor.name] = applicableFacts
-            
-        if len(applicableFacts) == 0:
-            return None
-        return random.choice(applicableFacts)
+    def render(self):
+        actors = [a.actor for a in self.actorPlaceholders]
+        return self.template.render(actors)
