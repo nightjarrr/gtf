@@ -125,6 +125,7 @@ class SimpleStringFactTemplate(FactTemplate):
      - Single-line
      - Fact pattern separated from rule definition by '|'
      - Rule definition section is optional
+     - Example of the format: "%s is a big tree.| (big, tree)"
     """
 
     def __init__(self, factString):
