@@ -1,6 +1,7 @@
 # coding=UTF-8
 import unittest
-from getthefacts.fact import Fact, SimpleStringFactFormatter
+from getthefacts.fact import Fact
+from getthefacts.fact.simple import SimpleStringFactFormatter
 from getthefacts.actor import Actor
 from getthefacts.rules import AndRule, TagRule, TrueRule
 
