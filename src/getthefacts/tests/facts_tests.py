@@ -15,6 +15,10 @@ class FactTests(unittest.TestCase):
         factString = fact.getFactAbout(Actor("Book"))
         assert factString == "Book is a word."
 
+    def testFactWithNoActorsIsReady(self):
+        fact = SimpleStringFactFormatter().read("Word is a word.")
+        assert fact.ready()
+
 class FactFormatterTests(unittest.TestCase):
     def testRead(self):
         f = SimpleStringFactFormatter()
