@@ -2,7 +2,7 @@
 import unittest
 import re
 from getthefacts.fact import Substitution
-from getthefacts.fact import Fact, FactFormatter, SimpleStringFactTemplate, FactFormatError
+from getthefacts.fact import Fact, SimpleStringFactFormatter, SimpleStringFactTemplate, FactFormatError
 from getthefacts.actor import Actor
 
 class SubstitutionTests(unittest.TestCase):
@@ -18,14 +18,14 @@ class SubstitutionTests(unittest.TestCase):
 class FactSubstitutionTests(unittest.TestCase):
 
     def testParse(self):
-        f = FactFormatter().read("%s is a [big, beautiful] [tree, bird, fish].")
+        f = SimpleStringFactFormatter().read("%s is a [big, beautiful] [tree, bird, fish].")
         s = f.template.substitutions
         assert len(s) == 2
         assert s[0].subst == "[big, beautiful]"
         assert s[1].subst == "[tree, bird, fish]"
 
     def testSingleSubstitution(self):
-        f = FactFormatter().read("%s is a [big, beautiful] tree.")
+        f = SimpleStringFactFormatter().read("%s is a [big, beautiful] tree.")
         s = f.getFactAbout(Actor("Oak"))
         assert s in ["Oak is a beautiful tree.", "Oak is a big tree."]
 
