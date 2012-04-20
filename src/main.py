@@ -3,6 +3,7 @@ import cmd
 import random
 import gettext
 from getthefacts.fact.simple import SimpleStringFactFormatter
+from getthefacts.fact.choosers import *
 from getthefacts.actor import *
 
 try:
@@ -34,7 +35,6 @@ class GtfCmd(cmd.Cmd):
     def preloop(self):
         self.actors = readList("../data/actors.txt", ActorFormatter())
         self.facts = readList("../data/facts.txt", SimpleStringFactFormatter())
-        self.chooser = FactChooser(self.facts)
         print _("Loaded %d facts and %d actors.") % (len(self.facts),
                                                      len(self.actors))
 
@@ -47,27 +47,28 @@ class GtfCmd(cmd.Cmd):
     def do_say(self, name):
         actor = None
         if len(name) == 0:
-            actor = self.__getRandomActor()
+            chooser = RandomFactChooser(self.facts, self.actors)
         else:
             actor = self.__findActor(name)
-        self.__say_about(actor)
+            if actor is None:
+                print _("Sorry, I could not find %s.") % name
+                return False
+            chooser = ActorBasedRandomFactChooser(actor, self.facts, self.actors)
+        self.__say_fact(chooser)
         return False
-
-    def __getRandomActor(self):
-        return random.choice(self.actors)
 
     def __findActor(self, name):
         for a in self.actors:
             if a.name == name:
                 return a
 
-    def __say_about(self, actor):
+    def __say_fact(self, chooser):
         try:
-            fact = self.chooser.choose(actor)
-            if fact == None:
-                print _("Sorry, I don't know anything about %s.") % actor.name
+            fact = chooser.choose()
+            if fact is None:
+                print _("Sorry, I could not find such fact.")
             else:
-                print fact.getFactAbout(actor)
+                print fact.render()
         except Exception, e:
             print _("Error occurred. Please try once again.")
             print e
