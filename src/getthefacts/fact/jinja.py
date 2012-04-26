@@ -22,8 +22,8 @@ class ActorExtension(Extension):
 
     tags = set(["actor"])
 
-	def __init__(self, environment):
-	    super(ActorExtension, self).__init__(environment)
+    def __init__(self, environment):
+        super(ActorExtension, self).__init__(environment)
 
     def parse(self, parser):
         pass
