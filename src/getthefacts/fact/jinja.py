@@ -17,14 +17,33 @@ class ActorExtension(Extension):
     Rule sting is optional, and in case it is missing, any actor is deemed suitable
 
         {% actor 'author' %}
-
     """
 
     tags = set(["actor"])
 
     def __init__(self, environment):
         super(ActorExtension, self).__init__(environment)
+        if not hasattr(self.environment, 'actorPlaceholders'):
+            self.environment.actorPlaceholders = []
 
     def parse(self, parser):
-        pass
+        # Skip the tag name
+        lineno = parser.stream.next().lineno
+        name = parser.parse_expression().value
+        if parser.stream.skip_if('comma'):
+            r = parser.parse_expression().value
+            try:
+                rule = rules.RuleParser(r).parse()
+            except rules.RuleParserError:
+                parser.fail('Invalid rule syntax: "%s"' % r, lineno, exc = rules.RuleParserError)
+        else:
+            rule = rules.TrueRule()
+        if not parser.stream.current.test('block_end'):
+            parser.fail('"actor" statement not finished.', lineno)
+
+        # Register the actor definition
+        a = ActorPlaceholder(name, rule)
+        self.environment.actorPlaceholders.append(a)
+        # No need to actually return anything to the template
+        return []
 
