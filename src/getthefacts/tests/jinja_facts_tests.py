@@ -1,11 +1,11 @@
 # coding=UTF-8
 import unittest
-from getthefacts.fact.jinja import ActorExtension
+from getthefacts.fact.jinja import ActorExtension, JinjaFactTemplate
 from getthefacts.actor import Actor
 from getthefacts.rules import *
 from jinja2 import Environment
 
-class JinjaFactTemplateTests(unittest.TestCase):
+class JinjaExtensionTests(unittest.TestCase):
     def testActorSyntax(self):
         e = Environment(extensions = [ActorExtension])
         template = e.from_string(' {% actor "author", "(old, beard)" %} ')
@@ -39,3 +39,16 @@ class JinjaFactTemplateTests(unittest.TestCase):
 
         assert e.actorPlaceholders[2].index == 'author3'
         assert e.actorPlaceholders[2].rule == AndRule([TagRule('old'), NotRule(TagRule('beard'))])
+
+class JinjaFactTemplateTests(unittest.TestCase):
+    def test(self):
+        s = """
+            {% actor "author", "(old, beard)" %}
+            {{ author.name }} was old and had a huge beard, but still he's a genius!
+        """
+        t = JinjaFactTemplate(s)
+        f = t.buildup()
+        a = Actor("Ernest Hemingway", ["old", "beard"])
+        r = f.getFactAbout(a)
+        print r
+        assert r.strip() == "Ernest Hemingway was old and had a huge beard, but still he's a genius!"

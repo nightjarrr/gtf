@@ -3,6 +3,7 @@
 from . import *
 from .. import rules
 
+from jinja2 import Environment
 from jinja2.ext import Extension
 
 class ActorExtension(Extension):
@@ -47,3 +48,15 @@ class ActorExtension(Extension):
         # No need to actually return anything to the template
         return []
 
+class JinjaFactTemplate(FactTemplate):
+    def __init__(self, factString):
+        FactTemplate.__init__(self)
+        self.factString = factString
+
+    def __parse__(self):
+        self.e = Environment(extensions = [ActorExtension])
+        self.template = self.e.from_string(self.factString)
+        return self.e.actorPlaceholders
+
+    def render(self, ctx):
+        return self.template.render(ctx)
