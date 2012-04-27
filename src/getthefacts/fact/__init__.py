@@ -33,9 +33,8 @@ class FactTemplate():
             self.__actorPlaceholders__ = self.__parse__()
         return Fact(self, self.__actorPlaceholders__[:])
 
-    def render(self, actors):
-        """Renders the underlying template using the provided list of ActorPlaceholders
-        with filled-in Actor instances."""
+    def render(self, ctx):
+        """Renders the underlying template using the provided dictionary {index:actor} filled from ActorPlaceholders"""
         pass
 
 class Fact:
@@ -80,5 +79,5 @@ class Fact:
         return self.render()
 
     def render(self):
-        actors = [a.actor for a in self.actorPlaceholders]
-        return self.template.render(actors)
+        ctx = dict([(a.index, a.actor) for a in self.actorPlaceholders])
+        return self.template.render(ctx)
