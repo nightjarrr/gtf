@@ -33,13 +33,32 @@ class GtfCmd(cmd.Cmd):
         self.facts = []
 
     def preloop(self):
-        self.actors = readList("../data/actors.txt", ActorFormatter())
-        self.facts = readList("../data/facts.txt", SimpleStringFactFormatter())
-        print _("Loaded %d facts and %d actors.") % (len(self.facts),
-                                                     len(self.actors))
+        pass
 
     def postcmd(self, stop, line):
         return stop
+
+    def __load_plain(self):
+        self.actors = readList("../data/actors.txt", ActorFormatter())
+        self.facts = readList("../data/facts.txt", SimpleStringFactFormatter())
+
+    def __load_jinja(self):
+        pass
+
+    STORES = {
+        "plain" : __load_plain,
+        "jinja" : __load_jinja,
+    }
+
+    def do_load(self, store):
+        store = store or "jinja"
+        if store in GtfCmd.STORES:
+            doload = GtfCmd.STORES[store]
+            doload(self)
+            print _("Loaded %d facts and %d actors.") % (len(self.facts), len(self.actors))
+        else:
+            print _("Unknown storage format: %s") % store
+            print _("Availavle formats: %s") % ", ".join(GtfCmd.STORES.iterkeys())
 
     def do_quit(self, line):
         return True
