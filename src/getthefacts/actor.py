@@ -1,4 +1,6 @@
 # coding=UTF-8
+
+import json
 from taggable import Taggable
 
 class Actor(Taggable):
@@ -28,3 +30,16 @@ class ActorFormatter:
         if actor.hasTags():
             return "%s| " % actor.name + ", ".join(actor.tags)
         else: return actor.name
+
+class ActorJsonFormatter:
+    def read(self, actorString):
+        d = json.loads(actorString)
+        if not "name" in d:
+            return None
+        a = Actor(None)
+        for k,v in d.iteritems():
+            setattr(a, k, v)
+        return a
+
+    def write(self, actor):
+        pass
