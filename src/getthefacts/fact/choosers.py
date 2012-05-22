@@ -22,7 +22,7 @@ class RandomFactChooser(FactChooser):
             return None
 
         fact = random.choice(self.facts).buildup()
-        actors = self.actors
+        actors = self.actors[:]
         if (len(fact.actorPlaceholders) > 0) \
             and (actors is None or len(actors) < len(fact.actorPlaceholders)):
             return None
@@ -55,7 +55,7 @@ class ActorBasedRandomFactChooser(FactChooser):
                 placeholder.set_actor(self.actor)
                 break
 
-        actors = self.actors
+        actors = self.actors[:]
         if (len(fact.actorPlaceholders) > 0) \
             and (actors is None or len(actors) < len(fact.actorPlaceholders)):
             return None
