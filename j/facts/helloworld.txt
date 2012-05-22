@@ -1,0 +1,2 @@
+{% actor "user" %}
+Hello, {{ ["dear", "lousy"]|random }} {{ user.name }}!
