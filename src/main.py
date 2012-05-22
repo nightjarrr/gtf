@@ -1,8 +1,11 @@
 # coding=UTF-8
+import os
 import cmd
 import random
 import gettext
+import os.path
 from getthefacts.fact.simple import SimpleStringFactFormatter
+from getthefacts.fact.jinja import JinjaFactFormatter
 from getthefacts.fact.choosers import *
 from getthefacts.actor import *
 
@@ -42,8 +45,18 @@ class GtfCmd(cmd.Cmd):
         self.actors = readList("../data/actors.txt", ActorFormatter())
         self.facts = readList("../data/facts.txt", SimpleStringFactFormatter())
 
+    def __load_dir(self, _dir, formatter):
+        r = []
+        ff = os.listdir(_dir)
+        for f in ff:
+            fl = os.path.join(_dir,f)
+            if os.path.isfile(fl):
+                r.append(formatter.read(open(fl).read()))
+        return r
+
     def __load_jinja(self):
-        pass
+        self.actors = self.__load_dir("../j/actors", ActorJsonFormatter())
+        self.facts = self.__load_dir("../j/facts", JinjaFactFormatter())
 
     STORES = {
         "plain" : __load_plain,
@@ -87,7 +100,7 @@ class GtfCmd(cmd.Cmd):
             if fact is None:
                 print _("Sorry, I could not find such fact.")
             else:
-                print fact.render()
+                print fact
         except Exception, e:
             print _("Error occurred. Please try once again.")
             print e

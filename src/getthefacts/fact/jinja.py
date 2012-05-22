@@ -60,3 +60,11 @@ class JinjaFactTemplate(FactTemplate):
 
     def render(self, ctx):
         return self.template.render(ctx)
+
+class JinjaFactFormatter:
+
+    """Read and write Facts to and from string."""
+
+    def read(self, factString):
+        t = JinjaFactTemplate(factString)
+        return t
